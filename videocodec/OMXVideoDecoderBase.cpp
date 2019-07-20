@@ -1092,9 +1092,13 @@ OMX_ERRORTYPE OMXVideoDecoderBase::SetNativeBuffer(OMX_PTR pStructure) {
 
     if (mOMXBufferHeaderTypePtrNum == 1) {
          mGraphicBufferParam.graphicBufferColorFormat = param->nativeBuffer->format;
+#ifdef ASUS_ZENFONE2_LP_BLOBS
+         mGraphicBufferParam.graphicBufferStride = param->nativeBuffer->stride;
+#else
          mGraphicBufferParam.graphicBufferHStride = param->nativeBuffer->stride;
          // FIXME: use IMG_native_handle_t->aiVStride[0] instead..
          mGraphicBufferParam.graphicBufferVStride = param->nativeBuffer->height;
+#endif
          mGraphicBufferParam.graphicBufferWidth = param->nativeBuffer->width;
          mGraphicBufferParam.graphicBufferHeight = param->nativeBuffer->height;
     }
