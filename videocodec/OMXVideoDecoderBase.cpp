@@ -321,7 +321,11 @@ OMX_ERRORTYPE OMXVideoDecoderBase::ProcessorPreFreeBuffer(OMX_U32 nPortIndex, OM
             }
 
             VideoDecoderOutputMetaData *metadata = (VideoDecoderOutputMetaData *)(buffer->pBuffer);
+#ifdef ASUS_ZENFONE2_LP_BLOBS
+            status = mVideoDecoder->signalRenderDone((void *)(metadata->pHandle));
+#else
             status = mVideoDecoder->signalRenderDone((void *)(metadata->pHandle), !found);
+#endif
         } else {
             status = mVideoDecoder->signalRenderDone(buffer->pBuffer);
         }
@@ -353,14 +357,24 @@ OMX_ERRORTYPE OMXVideoDecoderBase::ProcessorProcess(
         if (isResolutionChange) {
             HandleFormatChange();
         }
-
+#ifndef ASUS_ZENFONE2_LP_BLOBS
         if (mFlushMode) {
             LOGI("in mFlushMode, do HandleFormatChange.");
             HandleFormatChange();
         } else {
+#endif
             // Actually, if mAPMode is set, mWorkingMode should be GRAPHICBUFFER_MODE.
             if (((mAPMode == METADATA_MODE) && (mWorkingMode == GRAPHICBUFFER_MODE)) && mFormatChanged) {
-                if (((*pBuffers[OUTPORT_INDEX])->nFlags & OMX_BUFFERFLAG_EOS) || (mVideoDecoder->getOutputQueueLength() == 0)) {
+                if (((*pBuffers[OUTPORT_INDEX])->nFlags & OMX_BUFFERFLAG_EOS)
+#ifndef ASUS_ZENFONE2_LP_BLOBS
+                     || (mVideoDecoder->getOutputQueueLength() == 0)
+#endif
+                 ) {
+#ifdef ASUS_ZENFONE2_LP_BLOBS
+                    HandleFormatChange();
+                }
+           }
+#else
                     // Format changed, set mFlushMode, clear eos
                     mFlushMode = true;
                     mFormatChanged = false;
@@ -368,6 +382,7 @@ OMX_ERRORTYPE OMXVideoDecoderBase::ProcessorProcess(
                 }
             }
         }
+#endif
 
         // TODO: continue decoding
         return ret;
@@ -445,7 +460,7 @@ OMX_ERRORTYPE OMXVideoDecoderBase::ProcessorProcess(
     if (isResolutionChange) {
         HandleFormatChange();
     }
-
+#ifndef ASUS_ZENFONE2_LP_BLOBS
     if (mFlushMode) {
         LOGI("in mFlushMode, do HandleFormatChange.");
         HandleFormatChange();
@@ -459,6 +474,14 @@ OMX_ERRORTYPE OMXVideoDecoderBase::ProcessorProcess(
             }
         }
     }
+#else
+    if (((mAPMode == METADATA_MODE) && (mWorkingMode == GRAPHICBUFFER_MODE)) && mFormatChanged) {
+        if (((*pBuffers[OUTPORT_INDEX])->nFlags & OMX_BUFFERFLAG_EOS)
+           ) {
+            HandleFormatChange();
+        }
+    }
+#endif
 
     bool inputEoS = ((*pBuffers[INPORT_INDEX])->nFlags & OMX_BUFFERFLAG_EOS);
     bool outputEoS = ((*pBuffers[OUTPORT_INDEX])->nFlags & OMX_BUFFERFLAG_EOS);
@@ -517,10 +540,14 @@ OMX_ERRORTYPE OMXVideoDecoderBase::PrepareConfigBuffer(VideoConfigBuffer *p) {
             mOMXBufferHeaderTypePtrNum = 0;
 
             mGraphicBufferParam.graphicBufferColorFormat = def_output->format.video.eColorFormat;
+#ifdef ASUS_ZENFONE2_LP_BLOBS
+            mGraphicBufferParam.graphicBufferStride = getStride(def_output->format.video.nFrameWidth);
+#else
             mGraphicBufferParam.graphicBufferHStride = getStride(def_output->format.video.nFrameWidth);
             mGraphicBufferParam.graphicBufferVStride = (def_output->format.video.nFrameHeight + 0x1f) & ~0x1f;
-            mGraphicBufferParam.graphicBufferWidth = def_output->format.video.nFrameWidth;
+#endif
             mGraphicBufferParam.graphicBufferHeight = def_output->format.video.nFrameHeight;
+            mGraphicBufferParam.graphicBufferWidth = def_output->format.video.nFrameWidth;
 
             p->surfaceNumber = mMetaDataBuffersNum;
             for (int i = 0; i < MAX_GRAPHIC_BUFFER_NUM; i++) {
@@ -536,8 +563,12 @@ OMX_ERRORTYPE OMXVideoDecoderBase::PrepareConfigBuffer(VideoConfigBuffer *p) {
             }
         }
         p->flag |= USE_NATIVE_GRAPHIC_BUFFER;
+#ifdef ASUS_ZENFONE2_LP_BLOBS
+        p->graphicBufferStride = mGraphicBufferParam.graphicBufferStride;
+#else
         p->graphicBufferHStride = mGraphicBufferParam.graphicBufferHStride;
         p->graphicBufferVStride = mGraphicBufferParam.graphicBufferVStride;
+#endif
         p->graphicBufferWidth = mGraphicBufferParam.graphicBufferWidth;
         p->graphicBufferHeight = mGraphicBufferParam.graphicBufferHeight;
         p->graphicBufferColorFormat = mGraphicBufferParam.graphicBufferColorFormat;
@@ -698,12 +729,13 @@ OMX_ERRORTYPE OMXVideoDecoderBase::FillRenderBuffer(OMX_BUFFERHEADERTYPE **pBuff
     //pthread_mutex_lock(&mSerializationLock);
     const VideoRenderBuffer *renderBuffer = NULL;
     //pthread_mutex_unlock(&mSerializationLock);
-
+#ifndef ASUS_ZENFONE2_LP_BLOBS
     // in mFlushMode, provide empty buffer.
     if (mFlushMode) {
         buffer->nFilledLen = 0;
         return OMX_ErrorNone;
     }
+#endif
 
     if (((mAPMode == METADATA_MODE) && (mWorkingMode == GRAPHICBUFFER_MODE)) && mFormatChanged) {
          renderBuffer = mVideoDecoder->getOutput(true, ErrBufPtr);
@@ -974,7 +1006,7 @@ OMX_ERRORTYPE OMXVideoDecoderBase::BuildHandlerList(void) {
     AddHandler(static_cast<OMX_INDEXTYPE>(OMX_IndexExtVppBufferNum), GetDecoderVppBufferNum, SetDecoderVppBufferNum);
 #endif
     AddHandler(OMX_IndexConfigCommonOutputCrop, GetDecoderOutputCrop, SetDecoderOutputCrop);
-#ifdef USE_META_DATA
+#if defined(USE_META_DATA) && !defined(ASUS_ZENFONE2_LP_BLOBS)
     AddHandler(static_cast<OMX_INDEXTYPE>(OMX_IndexStoreMetaDataInBuffers), GetStoreMetaDataMode, SetStoreMetaDataMode);
 #endif
     AddHandler(static_cast<OMX_INDEXTYPE>(OMX_IndexExtEnableErrorReport), GetErrorReportMode, SetErrorReportMode);
