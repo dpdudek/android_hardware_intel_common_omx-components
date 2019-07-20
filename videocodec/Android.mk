@@ -69,6 +69,10 @@ ifeq ($(TARGET_BOARD_PLATFORM),baytrail)
 LOCAL_CFLAGS += -DUSE_GEN_HW
 endif
 
+ifeq ($(ASUS_ZENFONE2_LP_BLOBS),true)
+LOCAL_CFLAGS += -DASUS_ZENFONE2_LP_BLOBS
+endif
+
 # TODO: Fix this.
 LOCAL_CFLAGS += -Wno-error=unused-variable
 
@@ -125,6 +129,10 @@ endif
 ifeq ($(TARGET_BOARD_PLATFORM),moorefield)
 LOCAL_CFLAGS += -DVED_TILING
 LOCAL_CFLAGS += -DUSE_META_DATA
+endif
+
+ifeq ($(ASUS_ZENFONE2_LP_BLOBS),true)
+LOCAL_CFLAGS += -DASUS_ZENFONE2_LP_BLOBS
 endif
 
 PLATFORM_USE_GEN_HW := \
@@ -205,6 +213,10 @@ ifeq ($(TARGET_BOARD_PLATFORM),baytrail)
 LOCAL_CFLAGS += -DUSE_GEN_HW
 endif
 
+ifeq ($(ASUS_ZENFONE2_LP_BLOBS),true)
+LOCAL_CFLAGS += -DASUS_ZENFONE2_LP_BLOBS
+endif
+
 # TODO: Fix this.
 LOCAL_CFLAGS += -Wno-error=unused-variable
 
@@ -266,6 +278,10 @@ endif
 
 ifeq ($(TARGET_BOARD_PLATFORM),baytrail)
 LOCAL_CFLAGS += -DUSE_GEN_HW
+endif
+
+ifeq ($(ASUS_ZENFONE2_LP_BLOBS),true)
+LOCAL_CFLAGS += -DASUS_ZENFONE2_LP_BLOBS
 endif
 
 # TODO: Fix this.
@@ -330,6 +346,10 @@ endif
 
 ifeq ($(TARGET_BOARD_PLATFORM),baytrail)
 LOCAL_CFLAGS += -DUSE_GEN_HW
+endif
+
+ifeq ($(ASUS_ZENFONE2_LP_BLOBS),true)
+LOCAL_CFLAGS += -DASUS_ZENFONE2_LP_BLOBS
 endif
 
 # TODO: Fix this.
@@ -399,6 +419,10 @@ ifeq ($(TARGET_BOARD_PLATFORM),baytrail)
 LOCAL_CFLAGS += -DUSE_GEN_HW
 endif
 
+ifeq ($(ASUS_ZENFONE2_LP_BLOBS),true)
+LOCAL_CFLAGS += -DASUS_ZENFONE2_LP_BLOBS
+endif
+
 # TODO: Fix this.
 LOCAL_CFLAGS += -Wno-error=unused-variable
 
@@ -447,6 +471,10 @@ LOCAL_SRC_FILES += \
 LOCAL_CFLAGS += -DVED_TILING
 LOCAL_CFLAGS += -DUSE_META_DATA
 LOCAL_SHARED_LIBRARIES += libdl
+endif
+
+ifeq ($(ASUS_ZENFONE2_LP_BLOBS),true)
+LOCAL_CFLAGS += -DASUS_ZENFONE2_LP_BLOBS
 endif
 
 LOCAL_CFLAGS += -Werror
@@ -509,6 +537,10 @@ LOCAL_CFLAGS += -DVED_TILING
 LOCAL_CFLAGS += -DUSE_META_DATA
 endif
 
+ifeq ($(ASUS_ZENFONE2_LP_BLOBS),true)
+LOCAL_CFLAGS += -DASUS_ZENFONE2_LP_BLOBS
+endif
+
 # TODO: Fix this.
 LOCAL_CFLAGS += -Wno-error=unused-variable
 
@@ -546,6 +578,10 @@ LOCAL_SRC_FILES := \
     OMXComponentCodecBase.cpp \
     OMXVideoEncoderBase.cpp \
     OMXVideoEncoderAVC.cpp
+
+ifeq ($(ASUS_ZENFONE2_LP_BLOBS),true)
+LOCAL_CFLAGS += -DASUS_ZENFONE2_LP_BLOBS
+endif
 
 LOCAL_CFLAGS += $(LOCAL_C_FLAGS)
 LOCAL_CFLAGS += -Werror
@@ -590,6 +626,11 @@ LOCAL_CFLAGS += $(LOCAL_C_FLAGS)
 ifeq ($(SW_MPEG4_ENCODER),true)
     LOCAL_CFLAGS += -DSYNC_MODE
 endif
+
+ifeq ($(ASUS_ZENFONE2_LP_BLOBS),true)
+LOCAL_CFLAGS += -DASUS_ZENFONE2_LP_BLOBS
+endif
+
 LOCAL_CFLAGS += -Werror
 LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE := libOMXVideoEncoderH263
@@ -628,6 +669,10 @@ LOCAL_SRC_FILES := \
     OMXVideoEncoderMPEG4.cpp
 
 LOCAL_CFLAGS += $(LOCAL_C_FLAGS)
+
+ifeq ($(ASUS_ZENFONE2_LP_BLOBS),true)
+LOCAL_CFLAGS += -DASUS_ZENFONE2_LP_BLOBS
+endif
 
 LOCAL_CFLAGS += -Werror
 LOCAL_MODULE_TAGS := optional
@@ -680,6 +725,10 @@ ifeq ($(TARGET_BOARD_PLATFORM),moorefield)
 LOCAL_CFLAGS += -DVED_TILING
 endif
 
+ifeq ($(ASUS_ZENFONE2_LP_BLOBS),true)
+LOCAL_CFLAGS += -DASUS_ZENFONE2_LP_BLOBS
+endif
+
 # TODO: Fix this.
 LOCAL_CFLAGS += -Wno-error=unused-variable
 
@@ -716,6 +765,10 @@ LOCAL_SRC_FILES := \
     OMXComponentCodecBase.cpp \
     OMXVideoEncoderBase.cpp \
     OMXVideoEncoderVP8.cpp
+
+ifeq ($(ASUS_ZENFONE2_LP_BLOBS),true)
+LOCAL_CFLAGS += -DASUS_ZENFONE2_LP_BLOBS
+endif
 
 LOCAL_CFLAGS += $(LOCAL_C_FLAGS)
 LOCAL_CFLAGS += -Werror
